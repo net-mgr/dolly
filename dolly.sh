@@ -32,8 +32,11 @@ EOF
 
 cd /root/dolly
 eval "$(cat dolly.env <(echo) <(declare -x))"
-curl $GW1 > $GW1_CONF 
-curl $GW2 > $GW2_CONF
+for((i=1;i<=${NUM_OF_GW};i++)); do
+	gateway_host='$'"GW${i}"
+	conf_file=`eval echo '$'"GW${i}_CONF"`
+	eval curl tftp://${gateway_host} > $conf_file
+done;
 if [ `git status -s | wc -l` = "0" ]; then
   echo "no change"
 else
